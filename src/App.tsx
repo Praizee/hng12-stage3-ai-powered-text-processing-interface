@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { IoChatboxEllipsesOutline, IoWarningOutline } from "react-icons/io5";
 import { MdCancel, MdTranslate, MdOutlineSend } from "react-icons/md";
 import { PiLightningLight, PiSparkle } from "react-icons/pi";
-import { BiLoaderCircle } from "react-icons/bi";
+import { BiChevronDown, BiLoaderCircle } from "react-icons/bi";
 
 interface Message {
   id: string;
@@ -445,43 +445,49 @@ function App() {
                   {/* Translation selector */}
                   <div className="flex flex-wrap items-center gap-2">
                     <div className="flex items-center">
-                      <select
-                        className="block pl-3 pr-10 py-2 text-sm border border-gray-200 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-lg bg-white shadow-sm"
-                        aria-label="Select language for translation"
-                        onChange={(e) => {
-                          const targetLang = e.target.value;
-                          if (targetLang && !message.translations[targetLang]) {
-                            setIsTranslating((prev) => ({
-                              ...prev,
-                              [message.id]: true,
-                            }));
-                            setTimeout(() => {
-                              translateText(
-                                message.id,
-                                message.text,
-                                targetLang
-                              );
-                            }, 10);
-                          }
-                        }}
-                        value=""
-                      >
-                        <option value="" disabled>
-                          Translate to...
-                        </option>
-                        {languages.map((lang) => (
-                          <option
-                            key={lang.code}
-                            value={lang.code}
-                            disabled={
-                              message.language === lang.code ||
-                              Boolean(message.translations[lang.code])
+                      <div className="relative">
+                        <BiChevronDown className="absolute top-0 bottom-0 w-5 h-5 my-auto right-3" />
+                        <select
+                          className="block pl-3 pr-10 py-2 text-sm border border-gray-200 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-lg bg-white shadow-sm appearance-none"
+                          aria-label="Select language for translation"
+                          onChange={(e) => {
+                            const targetLang = e.target.value;
+                            if (
+                              targetLang &&
+                              !message.translations[targetLang]
+                            ) {
+                              setIsTranslating((prev) => ({
+                                ...prev,
+                                [message.id]: true,
+                              }));
+                              setTimeout(() => {
+                                translateText(
+                                  message.id,
+                                  message.text,
+                                  targetLang
+                                );
+                              }, 10);
                             }
-                          >
-                            {lang.name}
+                          }}
+                          value=""
+                        >
+                          <option value="" disabled>
+                            Translate to...
                           </option>
-                        ))}
-                      </select>
+                          {languages.map((lang) => (
+                            <option
+                              key={lang.code}
+                              value={lang.code}
+                              disabled={
+                                message.language === lang.code ||
+                                Boolean(message.translations[lang.code])
+                              }
+                            >
+                              {lang.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                       {isTranslating[message.id] && (
                         <BiLoaderCircle className="animate-spin size-5 ml-2 text-indigo-600" />
                       )}
